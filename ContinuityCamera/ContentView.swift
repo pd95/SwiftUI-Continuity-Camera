@@ -23,7 +23,7 @@ struct ContentView: View, DropDelegate {
                             .strokeBorder(style: StrokeStyle(lineWidth: hovering ? 3 : 1))
                     )
 
-                MyResponder(image: $image)
+                ContinuityCameraStartView(placeholder: "Right click here", image: $image)
                     .frame(width: 100, alignment: .center)
                     .padding()
                     .overlay(
@@ -81,29 +81,43 @@ struct ContentView: View, DropDelegate {
     
 }
 
-struct MyResponder: NSViewControllerRepresentable {
+struct ContinuityCameraStartView: NSViewRepresentable {
     
+    let placeholder: String
     @Binding var image: NSImage?
 
-    typealias NSViewControllerType = MyViewController
+    typealias NSViewType = MyTextView
     
-    func makeNSViewController(context: Context) -> MyViewController {
-        let vc = MyViewController(context.coordinator)
-        return vc
+    func makeNSView(context: Context) -> MyTextView {
+        let view = MyTextView()
+        view.string = placeholder
+        view.drawsBackground = false
+        view.insertionPointColor = NSColor.textBackgroundColor
+        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.delegate = context.coordinator
+
+        return view
     }
     
-    func updateNSViewController(_ nsViewController: MyViewController, context: Context) {
+    func updateNSView(_ nsViewController: MyTextView, context: Context) {
     }
     
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
     
-    class Coordinator: NSObject, NSServicesMenuRequestor {
-        var parent: MyResponder
+    class Coordinator: NSObject, NSTextViewDelegate, NSServicesMenuRequestor {
+        var parent: ContinuityCameraStartView
 
-        init(_ parent: MyResponder) {
+        init(_ parent: ContinuityCameraStartView) {
             self.parent = parent
+            super.init()
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError()
         }
         
         func readSelection(from pasteboard: NSPasteboard) -> Bool {
@@ -119,41 +133,24 @@ struct MyResponder: NSViewControllerRepresentable {
 
             return true
         }
-    }
-    
-    class MyViewController: NSViewController, NSTextViewDelegate {
-        
-        private let coordinator: Coordinator
-        private lazy var contentView = NSTextView()
 
-        override func loadView() {
-            print("loadView")
-            contentView.string = "Right click here"
-            contentView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-            contentView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-            contentView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            contentView.delegate = self
-            view = contentView
-        }
-        
-        init(_ coordinator: Coordinator) {
-            self.coordinator = coordinator
-            super.init(nibName: nil, bundle: nil)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError()
-        }
-        
         func textView(_ view: NSTextView, menu: NSMenu, for event: NSEvent, at charIndex: Int) -> NSMenu? {
+            // Return an empty context menu
             return NSMenu(title: menu.title)
         }
-        
+
+        func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
+            // Ignore user selection
+            NSMakeRange(0, 0)
+        }
+    }
+
+    final class MyTextView: NSTextView {
         override func validRequestor(forSendType sendType: NSPasteboard.PasteboardType?, returnType: NSPasteboard.PasteboardType?) -> Any? {
             if let pasteboardType = returnType,
                 // Service is image related.
                 NSImage.imageTypes.contains(pasteboardType.rawValue) {
-                return coordinator  // This object can receive image data.
+                return self.delegate
             } else {
                 // Let objects in the responder chain handle the message.
                 return super.validRequestor(forSendType: sendType, returnType: returnType)
