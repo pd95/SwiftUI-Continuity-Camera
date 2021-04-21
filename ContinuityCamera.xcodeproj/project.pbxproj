@@ -11,6 +11,7 @@
 		172E5AAD2630892A00151767 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172E5AAC2630892A00151767 /* ContentView.swift */; };
 		172E5AAF2630892A00151767 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 172E5AAE2630892A00151767 /* Assets.xcassets */; };
 		172E5AB22630892A00151767 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 172E5AB12630892A00151767 /* Preview Assets.xcassets */; };
+		172E5ABC263089B000151767 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172E5ABB263089B000151767 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		172E5AB12630892A00151767 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		172E5AB32630892A00151767 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		172E5AB42630892A00151767 /* ContinuityCamera.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ContinuityCamera.entitlements; sourceTree = "<group>"; };
+		172E5ABB263089B000151767 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				172E5AAA2630892A00151767 /* ContinuityCameraApp.swift */,
+				172E5ABB263089B000151767 /* AppDelegate.swift */,
 				172E5AAC2630892A00151767 /* ContentView.swift */,
 				172E5AAE2630892A00151767 /* Assets.xcassets */,
 				172E5AB32630892A00151767 /* Info.plist */,
@@ -140,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				172E5ABC263089B000151767 /* AppDelegate.swift in Sources */,
 				172E5AAD2630892A00151767 /* ContentView.swift in Sources */,
 				172E5AAB2630892A00151767 /* ContinuityCameraApp.swift in Sources */,
 			);
