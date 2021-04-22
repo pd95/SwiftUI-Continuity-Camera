@@ -23,9 +23,12 @@ struct ContentView: View, DropDelegate {
                             .strokeBorder(style: StrokeStyle(lineWidth: hovering ? 3 : 1))
                     )
 
-                ContinuityCameraStartView(placeholder: "Right click here", image: $image)
-                    .frame(width: 100, alignment: .center)
+                Text("or right click here")
+                    .allowsHitTesting(false)
                     .padding()
+                    .background(
+                        ContinuityCameraStartView(placeholder: "", image: $image)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8.0)
                             .stroke()
@@ -93,9 +96,7 @@ struct ContinuityCameraStartView: NSViewRepresentable {
         view.string = placeholder
         view.drawsBackground = false
         view.insertionPointColor = NSColor.textBackgroundColor
-        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.autoresizingMask = [.width, .height]
         view.delegate = context.coordinator
 
         return view
