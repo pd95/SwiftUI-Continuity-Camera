@@ -38,7 +38,11 @@ struct ContentView: View, DropDelegate {
                     .allowsHitTesting(false)
                     .padding()
                     .background(
-                        ContinuityCameraStartView(placeholder: "", image: $image)
+                        ContinuityCameraStartView(placeholder: "") { data, fileType in
+                            print("ContinuityCamera is sending \(fileType): \(data)")
+                            self.showImage(data: data, fileType: fileType)
+                            return true
+                        }
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8.0)
@@ -109,7 +113,7 @@ struct ContentView: View, DropDelegate {
 struct ContinuityCameraStartView: NSViewRepresentable {
     
     let placeholder: String
-    @Binding var image: NSImage?
+    let handler: (Data, UTType) -> Bool
 
     typealias NSViewType = MyTextView
     
@@ -148,13 +152,34 @@ struct ContinuityCameraStartView: NSViewRepresentable {
             guard pasteboard.canReadItem(withDataConformingToTypes: NSImage.imageTypes) else {
                 return false
             }
-            // Load the image.
-            guard let image = NSImage(pasteboard: pasteboard) else {
-                return false
-            }
-            parent.image = image
 
-            return true
+            let validImageTypes = Set(NSImage.imageTypes)
+            let availableTypes = (pasteboard.types ?? []).map(\.rawValue)
+            let availableImageTypes = validImageTypes.intersection(availableTypes)
+
+            // If multiple formats are available, try looking for jpeg first
+            let jpegIdentifier = UTType.jpeg.identifier
+            if availableImageTypes.contains(jpegIdentifier) {
+                if let data = pasteboard.data(forType: NSPasteboard.PasteboardType(jpegIdentifier)) {
+                    if parent.handler(data, .jpeg) {
+                        return true
+                    }
+                }
+            }
+            
+            var result = false
+            availableTypes.forEach { type in
+                if !result,
+                   let utType = UTType(type),
+                   let data = pasteboard.data(forType: NSPasteboard.PasteboardType(type))
+                {
+                    if parent.handler(data, utType) {
+                        result = true
+                    }
+                }
+            }
+
+            return result
         }
 
         func textView(_ view: NSTextView, menu: NSMenu, for event: NSEvent, at charIndex: Int) -> NSMenu? {
