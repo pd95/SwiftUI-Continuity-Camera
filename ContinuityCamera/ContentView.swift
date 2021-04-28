@@ -53,6 +53,7 @@ struct ContentView: View, DropDelegate {
                 Image(nsImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .background(Color.white)
             }
         }
         .onDrop(of: [.fileURL], isTargeted: $hovering, perform: { (itemProviders, targetPosition) -> Bool in
