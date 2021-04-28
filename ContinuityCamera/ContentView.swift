@@ -11,10 +11,21 @@ import UniformTypeIdentifiers
 struct ContentView: View, DropDelegate {
     
     @State private var image: NSImage?
+    @State private var icon: NSImage?
+    @State private var fileType: UTType?
+    @State private var fileName: String?
+    @State private var message: String?
     @State private var hovering = false
     
     var body: some View {
         VStack {
+            HStack {
+                VStack {
+                    icon.map(Image.init)
+                    fileName.map(Text.init)
+                }
+                message.map(Text.init)
+            }
             HStack {
                 Text("Drag a document here")
                     .padding()
@@ -48,22 +59,22 @@ struct ContentView: View, DropDelegate {
             let urlIdentifier = UTType.fileURL.identifier
             for itemProvider in itemProviders {
                 if itemProvider.hasItemConformingToTypeIdentifier(urlIdentifier) {
-                    print(itemProvider.loadItem(forTypeIdentifier: urlIdentifier, options: nil, completionHandler: { (item, error) in
+                    itemProvider.loadItem(forTypeIdentifier: urlIdentifier, options: nil, completionHandler: { (item, error) in
                         if let error = error {
                             print(error)
                         }
                         if let item = item,
                            let data = item as? Data,
-                           let url = URL(dataRepresentation: data, relativeTo: nil)
+                           let url = URL(dataRepresentation: data, relativeTo: nil),
+                           let data = try? Data(contentsOf: url),
+                           let fileType = UTType(filenameExtension: url.pathExtension)
                         {
-                            print(url)
-                            if let nsImage = NSImage(contentsOf: url) {
-                                DispatchQueue.main.async {
-                                    self.image = nsImage
-                                }
-                            }
+                            self.showImage(data: data, fileType: fileType, fileName: url.lastPathComponent)
                         }
-                    }))
+                        else {
+                            print("Something is wrong with the data: \(String(describing: item))")
+                        }
+                    })
                     return true
                 }
             }
@@ -71,6 +82,17 @@ struct ContentView: View, DropDelegate {
         })
         .frame(minWidth: 500, minHeight: 500)
         .padding()
+    }
+    
+    private func showImage(data: Data, fileType: UTType, fileName: String = "No Name") {
+        let nsImage = NSImage(data: data)
+        DispatchQueue.main.async {
+            self.image = nsImage
+            self.fileType = fileType
+            self.icon = NSWorkspace.shared.icon(for: fileType)
+            self.fileName = fileName
+            self.message = nsImage == nil ? "Not a valid image" : nil
+        }
     }
 
     func performDrop(info: DropInfo) -> Bool {
@@ -81,7 +103,6 @@ struct ContentView: View, DropDelegate {
         }
         return false
     }
-    
 }
 
 struct ContinuityCameraStartView: NSViewRepresentable {
