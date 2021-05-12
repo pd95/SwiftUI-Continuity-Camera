@@ -24,6 +24,7 @@
 		172E5AB32630892A00151767 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		172E5AB42630892A00151767 /* ContinuityCamera.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ContinuityCamera.entitlements; sourceTree = "<group>"; };
 		172E5ABB263089B000151767 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		17726C01264B16F20041EF4D /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +42,7 @@
 			isa = PBXGroup;
 			children = (
 				171616002632108800A70549 /* README.md */,
+				17726C01264B16F20041EF4D /* LICENSE */,
 				172E5AA92630892A00151767 /* ContinuityCamera */,
 				172E5AA82630892A00151767 /* Products */,
 			);
